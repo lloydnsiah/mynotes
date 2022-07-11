@@ -36,83 +36,75 @@ class _LoginViewState extends State<LoginView> {
         title: Text("Login"),
         centerTitle: true,
       ),
-      body:
-      FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          switch(snapshot.connectionState){
-            case ConnectionState.done:
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      TextField(
-                        controller: _email,
-                        decoration: const InputDecoration(
-                          hintText: "Enter Email Here",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0,),
-                      TextField(
-                        controller: _password,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: "Enter Password Here",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0,),
-                      TextButton(onPressed: () async {
-                        final email = _email.text;
-                        final password = _password.text;
-                        try{
-                          final usercredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-                          print(usercredential);
-                        }on FirebaseAuthException catch(e){
-                          print(e.code);
-                          if(e.code == "user not found"){
-                            print("User not found..");
-                          }else{
-                            print("something else happened");
-                            print(e.code);
-                            print(e);
-                          }
-                        }
-                        catch(e){
-                          print(e);
-                        }
-
-                      },
-                        child: Text("Login"),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Do not have an account"),
-                          SizedBox(width: 5.0,),
-                          TextButton(onPressed: (){},
-                              child: Text("click here.."))
-                        ],
-                      ),
-                      TextButton(onPressed: (){
-                        FirebaseAuth.instance.signOut();
-                      },
-                          child: Text("Logout"))
-                    ],
-                  ),
-
+      body:  Center(
+        child: Padding(
+          padding: EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                controller: _email,
+                decoration: const InputDecoration(
+                  hintText: "Enter Email Here",
+                  hintStyle: TextStyle(color: Colors.grey),
                 ),
-              );
-            default:
-              return const Text("Loading.....");
-          }
+              ),
+              const SizedBox(height: 10.0,),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  hintText: "Enter Password Here",
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+              const SizedBox(height: 10.0,),
+              TextButton(onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                try{
+                  final usercredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                  print(usercredential);
+                }on FirebaseAuthException catch(e){
+                  print(e.code);
+                  if(e.code == "user not found"){
+                    print("User not found..");
+                  }else{
+                    print("something else happened");
+                    print(e.code);
+                    print(e);
+                  }
+                }
+                catch(e){
+                  print(e);
+                }
 
-        },
+              },
+                child: Text("Login"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Do not have an account"),
+                  SizedBox(width: 5.0,),
+                  TextButton(onPressed: (){
+                    Navigator.of(context).pushNamedAndRemoveUntil("/register/", (route) => false);
+                  },
+                      child: Text("click here.."))
+                ],
+              ),
+              TextButton(onPressed: (){
+                FirebaseAuth.instance.signOut();
+              },
+                  child: Text("Logout")),
+              TextButton(onPressed: (){
+                Navigator.of(context).pushNamedAndRemoveUntil("/verifyEmail/", (route) => false);
+              },
+                  child: const Text("Verify Email click here")),
+            ],
+          ),
+
+        ),
       ),
     );
   }

@@ -34,60 +34,58 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Register"),
+        title: Text("Register"),
+        centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField( controller: _email,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: "Enter your Email here",
+                  )),
+              TextField(controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  hintText: "Enter your password here",
+
+                ),),
+              TextButton(onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                try{
+                  final usercredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+                  print(usercredential);
+                }on FirebaseAuthException catch (e){
+                  print(e.code);
+                }catch(e){
+                  print(e);
+                }
+
+              },
+                child: Text("Register"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text("Already have an Account."),
+                  TextButton(onPressed: (){
+                    Navigator.of(context).pushNamedAndRemoveUntil("/login/", (route) => false);
+                  },
+                      child: const Text("Login"))
+                ],
+              )
+            ],
+          ),
         ),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          switch(snapshot.connectionState){
-            case ConnectionState.done:
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextField( controller: _email,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            hintText: "Enter your Email here",
-                          )),
-                      TextField(controller: _password,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                          hintText: "Enter your password here",
-
-                        ),),
-                      TextButton(onPressed: () async {
-                        final email = _email.text;
-                        final password = _password.text;
-                        try{
-                          final usercredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-                          print(usercredential);
-                        }on FirebaseAuthException catch (e){
-                          print(e.code);
-                        }catch(e){
-                          print(e);
-                        }
-
-                      },
-                        child: Text("Register"),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            default:
-              return const Text("Loading.....");
-          }
-
-        },
       ),
     );
   }
